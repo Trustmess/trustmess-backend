@@ -22,4 +22,5 @@ RUN pip install --no-cache-dir \
 EXPOSE 8000
 
 # Start server using Python script that reads PORT env variable
+RUN python3 init_db_on_startup.py
 CMD ["python3", "start.py"]
