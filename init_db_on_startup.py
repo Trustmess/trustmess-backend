@@ -1,6 +1,6 @@
 import os
 import src.db_connector as db_connector
-from src.secure.passhashing import hash_password
+from src.secure.passhashing import hash_password_def
 
 def initialize_database():
     """
@@ -18,9 +18,9 @@ def initialize_database():
             
             # Add test users
             test_users = [
-                ('admin', hash_password('admin123'), 1),
-                ('user1', hash_password('password1'), 0),
-                ('user2', hash_password('password2'), 0),
+                ('admin', hash_password_def('admin123'), 1),
+                ('user1', hash_password_def('password1'), 0),
+                ('user2', hash_password_def('password2'), 0),
             ]
             
             for username, password, is_admin in test_users:
