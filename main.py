@@ -15,6 +15,37 @@ def hash_password(password: str) -> str:
 
 app = FastAPI()
 
+# Initialize database on startup
+@app.on_event("startup")
+async def startup_event():
+    """Initialize database when app starts"""
+    import os
+    if not os.path.exists(db_connector.DB_PATH_MAIN):
+        print("Database not found, initializing...")
+        conn = db_connector.get_db_connection(db_connector.DB_PATH_MAIN)
+        db_connector.init_db(conn)
+        
+        # Add test users
+        from src.secure.passhashing import hash_password
+        test_users = [
+            ('admin', hash_password('admin123'), 1),
+            ('user1', hash_password('password1'), 0),
+            ('user2', hash_password('password2'), 0),
+        ]
+        for username, password, is_admin in test_users:
+            try:
+                conn.execute(
+                    'INSERT INTO users (username, password, isAdmin) VALUES (?, ?, ?)',
+                    (username, password, is_admin)
+                )
+            except:
+                pass  # User already exists
+        conn.commit()
+        conn.close()
+        print("✅ Database initialized")
+    else:
+        print("Database already exists")
+
 '''Integrate Web socked form create list of online users'''
 from typing import Dict
 from fastapi import WebSocket, WebSocketDisconnect
