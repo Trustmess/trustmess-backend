@@ -31,19 +31,19 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/backend/fastapi-app:${{ github.sha }} .
-          docker tag ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/backend/fastapi-app:${{ github.sha }} \
-                     ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/backend/fastapi-app:latest
+          docker build -t ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/trust-messenger-backend/fastapi-app:${{ github.sha }} .
+          docker tag ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/trust-messenger-backend/fastapi-app:${{ github.sha }} \
+                     ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/trust-messenger-backend/fastapi-app:latest
 
       - name: Push Docker image to Artifact Registry
         run: |
-          docker push ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/backend/fastapi-app:${{ github.sha }}
-          docker push ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/backend/fastapi-app:latest
+          docker push ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/trust-messenger-backend/fastapi-app:${{ github.sha }}
+          docker push ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/trust-messenger-backend/fastapi-app:latest
 
       - name: Deploy to Cloud Run
         run: |
           gcloud run deploy ${{ env.SERVICE_NAME }} \
-            --image ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/backend/fastapi-app:${{ github.sha }} \
+            --image ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/trust-messenger-backend/fastapi-app:${{ github.sha }} \
             --region ${{ env.REGION }} \
             --platform managed \
             --allow-unauthenticated \
