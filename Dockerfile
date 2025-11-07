@@ -11,7 +11,7 @@ RUN pip install --no-cache-dir uv
 COPY pyproject.toml uv.lock ./
 
 # Install dependencies using uv
-RUN uv sync --frozen
+RUN uv sync --frozen --no-dev
 
 # Copy application code
 COPY . .
@@ -19,5 +19,14 @@ COPY . .
 # Expose port
 EXPOSE 8000
 
-# Initialize database and run the application
-CMD ["sh", "-c", "uv run python init_db.py && uv run uvicorn main:app --host 0.0.0.0 --port 8000"]
+# Create startup script
+RUN echo '#!/bin/sh\n\
+set -e\n\
+echo "Initializing database..."\n\
+uv run python init_db.py\n\
+echo "Starting server..."\n\
+exec uv run uvicorn main:app --host 0.0.0.0 --port 8000\n\
+' > /app/start.sh && chmod +x /app/start.sh
+
+# Run startup script
+CMD ["/app/start.sh"]
