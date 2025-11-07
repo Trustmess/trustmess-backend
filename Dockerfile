@@ -22,4 +22,5 @@ RUN pip install --no-cache-dir \
 EXPOSE 8000
 
 # Start server (database will be initialized on first startup)
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Use PORT env variable from Cloud Run, default to 8000
+CMD uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000}
