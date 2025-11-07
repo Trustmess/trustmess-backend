@@ -41,7 +41,6 @@ async def startup_event():
             except:
                 pass  # User already exists
         conn.commit()
-        conn.close()
         print("✅ Database initialized")
     else:
         print("Database already exists")
