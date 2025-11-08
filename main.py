@@ -15,11 +15,36 @@ def hash_password(password: str) -> str:
 
 app = FastAPI()
 
-# This is no longer needed, as the database is initialized
-# by the Dockerfile RUN command before the app starts.
-# @app.on_event("startup")
-# async def startup_event():
-#     ...
+# Initialize database on startup
+@app.on_event("startup")
+async def startup_event():
+    """Initialize database when app starts"""
+    import os
+    if not os.path.exists(db_connector.DB_PATH_MAIN):
+        print("Database not found, initializing...")
+        conn = db_connector.get_db_connection(db_connector.DB_PATH_MAIN)
+        db_connector.init_db(conn)
+        
+        # Add test users
+        from src.secure.passhashing import hash_password_def
+        test_users = [
+            ('admin', hash_password_def('admin123'), 1),
+            ('user1', hash_password_def('password1'), 0),
+            ('user2', hash_password_def('password2'), 0),
+        ]
+        for username, password, is_admin in test_users:
+            try:
+                conn.execute(
+                    'INSERT INTO users (username, password, isAdmin) VALUES (?, ?, ?)',
+                    (username, password, is_admin)
+                )
+            except Exception as e:
+                print(f"Could not add user {username}: {e}")
+        conn.commit()
+        print("✅ Database initialized")
+    else:
+        print("Database already exists")
+
 
 '''Integrate Web socked form create list of online users'''
 from typing import Dict
@@ -69,8 +94,7 @@ app.add_middleware(
         "http://192.168.1.110:5173",
         "http://172.20.10.2:5173",
         "http://192.168.1.43:5173",
-        "https://nogenryford.github.io",
-        "https://nogenryford.github.io/final-project-FE"
+        "https://nogenryford.github.io"
     ],
     allow_credentials=True,
     allow_methods=["*"],
