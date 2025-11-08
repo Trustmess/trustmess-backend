@@ -22,4 +22,4 @@ RUN pip install --no-cache-dir \
 EXPOSE 8000
 
 # Start server using Python script that reads PORT env variable
-CMD ["python3", "start.py"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "${PORT:-8000}"]

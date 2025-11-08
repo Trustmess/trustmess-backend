@@ -8,7 +8,7 @@ on:
 env:
   PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
   REGION: ${{ secrets.GCP_REGION }}
-  SERVICE_NAME: backend-fastapi
+  SERVICE_NAME: trustmess-backend
 
 jobs:
   deploy:
@@ -48,6 +48,8 @@ jobs:
             --platform managed \
             --allow-unauthenticated \
             --port 8000 \
+            --concurrency 1 \
+            --cpu-throttling off \
             --memory 512Mi \
             --cpu 1 \
             --max-instances 10 \
