@@ -69,7 +69,8 @@ app.add_middleware(
         "http://192.168.1.110:5173",
         "http://172.20.10.2:5173",
         "http://192.168.1.43:5173",
-        "https://nogenryford.github.io"
+        "https://nogenryford.github.io",
+        "https://nogenryford.github.io/final-project-FE"
     ],
     allow_credentials=True,
     allow_methods=["*"],
