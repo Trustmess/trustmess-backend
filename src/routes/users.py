@@ -1,20 +1,7 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter
 from src.db import queries
-from src.schemas.auth import AuthRequest
-from src.secure.auth_middleware import get_current_user
 
 router = APIRouter()
-
-# ? ROOT ROUTE
-# *****************************************************************************
-@router.get("/")
-async def read_root():
-    return {
-        "status": "Ok",
-        "docs": "/docs",
-        }
-# *****************************************************************************
-
 
 # * Get all users
 # *****************************************************************************
