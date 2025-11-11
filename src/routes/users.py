@@ -7,7 +7,7 @@ router = APIRouter()
 
 # ? ROOT ROUTE
 # *****************************************************************************
-@app.get("/")
+@router.get("/")
 async def read_root():
     return {
         "status": "Ok",
@@ -18,11 +18,9 @@ async def read_root():
 
 # * Get all users
 # *****************************************************************************
-@app.get("/users/", name="Read Users from SQLite DB", tags=["database"])
-async def read_sqlite_users():
-    conn = db_connector.get_db_connection(db_connector.DB_PATH_MAIN)
-    users = db_connector.get_all_users(conn)
-    conn.close()
+@router.get("/users/", name="Get All Users", tags=["database"])
+async def get_all_users():
+    users = queries.get_all_users()
     return [dict(user) for user in users]
 # *****************************************************************************
 
@@ -30,10 +28,8 @@ async def read_sqlite_users():
 # ! ONLY DEV, DELETE BEFORE DEPLOY
 # ! Get All users with passwords
 # ! *****************************************************************************
-@app.get("/dev/users_with_pass/", name="Read Users with pass", tags=["dev"])
-async def read_sqlite_users_with_pass():
-    conn = db_connector.get_db_connection(db_connector.DB_PATH_MAIN)
-    users = db_connector.get_all_users_with_pass(conn)
-    conn.close()
+@router.get("/dev/users_with_pass/", name="Read Users with pass", tags=["dev"], description="Don't use on prod")
+async def get_all_users_with_pass():
+    users = queries.get_all_users_with_pass()
     return [dict(user) for user in users]
 # ! *****************************************************************************
