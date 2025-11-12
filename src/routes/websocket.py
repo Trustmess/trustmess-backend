@@ -1,6 +1,7 @@
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 from src.db import queries
 from src.websocket.managed import manager
+import json
 
 router = APIRouter()
 
@@ -24,10 +25,12 @@ async def websocket_endpoint(websocket: WebSocket, user_id: int):
         # Keep connection alive
         while True:
             data = await websocket.receive_text()
-            '''
-            Can handle incoming messages here if needed
-            '''
+            
+            message_data = json.loads(data)
+            await manager.handle_message(message_data, user_id)
+
             print(f"Received from {user_id}: {data}")
+            
     except WebSocketDisconnect:
         await manager.disconnect(user_id)
         await manager.broadcast_online_users()

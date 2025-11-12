@@ -1,5 +1,7 @@
-from typing import Dict
+from typing import Dict, List
 from fastapi import WebSocket
+import json
+import datetime
 
 
 class ConnectionManager:
@@ -8,6 +10,7 @@ class ConnectionManager:
     def __init__(self):
         self.active_connections: Dict[int, WebSocket] = {}
         self.online_users: Dict[int, str] = {}
+        self.chat_messages: Dict[str, List[dict]] = {}
     
     async def connect(self, user_id: int, username: str, websocket: WebSocket):
         '''Add new connection'''
@@ -49,6 +52,37 @@ class ConnectionManager:
         # Clean up disconnected
         for user_id in disconnected:
             await self.disconnect(user_id)
+
+    async def send_personal_message(self, message: dict, user_id: int):
+        '''Send message to user'''
+        if user_id in self.active_connections:
+            try:
+                await self.active_connections[user_id].send_text(json.dumps(message))
+            except Exception as error:
+                print(f'Error sending message to user {user_id}: {error}')
+
+    async def handle_message(self, data: dict, sender_id: int ):
+        '''Handle input message'''
+        message_type = data.get('type')
+
+        if message_type == 'chat_message':
+            # Message in chat
+            recipient_id = data.get('recipient_id')
+            content = data.get('content')
+            timestamp = data.get('timestamp', datetime.utcnow().isoformat())
+
+            # Create message for sending 
+            message = {
+                "type": "chat_message",
+                "sender_id": sender_id,
+                "recipient_id": recipient_id,
+                "content": content,
+                "timestamp": timestamp,
+                "message_id": data.get("message_id")  # ? It's in example, for what this? 
+            }
+
+            # Send to recip user
+            await self.send_personal_message(message, recipient_id)
 
     def get_online_count(self) -> int:
         '''Get count of online users'''
