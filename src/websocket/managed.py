@@ -16,7 +16,7 @@ class ConnectionManager:
         self.online_users[user_id] = username
         print(f"User {user_id} ({username}) connected")
         await self.broadcast_online_users()
-
+        
     async def disconnect(self, user_id: int):
         '''Remove connection'''
 
