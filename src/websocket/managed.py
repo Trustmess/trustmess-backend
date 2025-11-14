@@ -69,7 +69,7 @@ class ConnectionManager:
             # Message in chat
             recipient_id = data.get('recipient_id')
             content = data.get('content')
-            timestamp = data.get('timestamp', datetime.utcnow().isoformat())
+            timestamp = data.get('timestamp', datetime.datetime.utcnow().isoformat())
 
             # Create message for sending 
             message = {
@@ -83,6 +83,8 @@ class ConnectionManager:
 
             # Send to recip user
             await self.send_personal_message(message, recipient_id)
+            # Also send back to sender so they see their own message
+            await self.send_personal_message(message, sender_id)
 
     def get_online_count(self) -> int:
         '''Get count of online users'''
