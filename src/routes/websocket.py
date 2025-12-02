@@ -5,7 +5,10 @@ import json
 
 router = APIRouter()
 
-@router.websocket("/ws/{user_id}")
+
+# ? websocket /ws/{user_id}
+# *****************************************************************************
+@router.websocket("/ws/{user_id}", name="NONE")
 async def websocket_endpoint(websocket: WebSocket, user_id: int):
     """
     WebSocket connection for control online status
@@ -17,20 +20,20 @@ async def websocket_endpoint(websocket: WebSocket, user_id: int):
     if not user:
         await websocket.close(code=1008, reason="User not found")
         return
-    
+
     # Connect user
-    await manager.connect(user_id, user['username'], websocket)
-    
+    await manager.connect(user_id, user["username"], websocket)
+
     try:
         # Keep connection alive
         while True:
             data = await websocket.receive_text()
-            
+
             message_data = json.loads(data)
             await manager.handle_message(message_data, user_id)
 
             print(f"Received from {user_id}: {data}")
-            
+
     except WebSocketDisconnect:
         await manager.disconnect(user_id)
         await manager.broadcast_online_users()
@@ -40,11 +43,19 @@ async def websocket_endpoint(websocket: WebSocket, user_id: int):
         await manager.broadcast_online_users()
 
 
-@router.get("/online")
+# *****************************************************************************
+
+
+# * GET
+# *****************************************************************************
+@router.get("/ws/online", name="list_online_users", tags=["Websockets"])
 async def get_online_user():
-    '''Get list of currently online users'''
-    return{
+    """Get list of currently online users"""
+    return {
         "status": "success",
         "users": manager.get_online_list(),
-        "count": manager.get_online_count()
+        "count": manager.get_online_count(),
     }
+
+
+# *****************************************************************************
