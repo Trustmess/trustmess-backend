@@ -1,6 +1,7 @@
 from fastapi import APIRouter, HTTPException, Response, Depends, Cookie
 from src.db import queries
 from src.schemas.auth import AuthRequest
+from src.schemas.user import DeleteUserRequest
 from src.secure.passhashing import (
     hash_password_def,
     verify_hached_password_def as hashed_password,
@@ -115,8 +116,8 @@ async def register(auth_request: AuthRequest):
 # * POST /auth/delete_user
 # *****************************************************************************
 @router.post("/auth/delete_user", tags=["authentication"])
-async def delete_user(username: str):
-    deleted = queries.delete_user(username)
+async def delete_user(request: DeleteUserRequest):
+    deleted = queries.delete_user(request.username)
     if not deleted:
         raise HTTPException(status_code=404, detail="User not found")
     return {"status": "succes", "messaga": "User deleted successfully"}
