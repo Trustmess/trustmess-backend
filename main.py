@@ -24,6 +24,7 @@ app.add_middleware(
         "http://192.168.1.43:4173",
         "http://192.168.1.110:5173",
         "http://192.168.1.110:4173",
+        "http://192.168.88.237:5173",
         "https://trustmess.org",
     ],
     allow_credentials=True,
