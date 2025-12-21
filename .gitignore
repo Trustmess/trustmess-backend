@@ -18,3 +18,5 @@ wheels/
 db.db
 # utils
 utils/
+src/.DS_Store
+.DS_Store
