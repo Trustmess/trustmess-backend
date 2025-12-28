@@ -68,6 +68,14 @@ def create_user(username: str, hashed_password: str, isAdmin: bool = False):
         release_connection(conn)
 
 
+def update_username():
+    pass
+
+
+def update_password():
+    pass
+
+
 def delete_user(username: str):
     conn = get_connection()
     try:
