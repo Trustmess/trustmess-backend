@@ -115,12 +115,26 @@ async def register(auth_request: AuthRequest):
 
 # * POST /auth/delete_user
 # *****************************************************************************
-@router.post("/auth/delete_user", tags=["authentication"])
+@router.post("/auth/delete_user", tags=["authentication", "users_crud"])
 async def delete_user(request: DeleteUserRequest):
     deleted = queries.delete_user(request.username)
     if not deleted:
         raise HTTPException(status_code=404, detail="User not found")
     return {"status": "succes", "messaga": "User deleted successfully"}
+
+
+# *****************************************************************************
+# * POST /auth/update_username
+# *****************************************************************************
+@router.post("/auth/update_username", tags=["authentication", "users_crud"])
+async def update_username(request: DeleteUserRequest): ...
+
+
+# *****************************************************************************
+# * POST /auth/update_password
+# *****************************************************************************
+@router.post("/auth/update_password", tags=["authentication", "users_crud"])
+async def update_password(request: DeleteUserRequest): ...
 
 
 # *****************************************************************************
