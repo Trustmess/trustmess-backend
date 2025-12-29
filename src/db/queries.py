@@ -68,15 +68,39 @@ def create_user(username: str, hashed_password: str, isAdmin: bool = False):
         release_connection(conn)
 
 
-def update_username():
-    pass
+def update_username(username: str, new_username: str):
+    conn = get_connection()
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute(
+                "UPDATE users SET username = %s WHERE username = %s",
+                (new_username, username),
+            )
+            conn.commit()
+    except Exception as error:
+        conn.rollback()
+        raise
+    finally:
+        release_connection(conn)
 
 
-def update_password():
-    pass
+def update_password(username: str, new_hashed_password: str):
+    conn = get_connection()
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute(
+                "UPDATE users SET password = %s WHERE username = %s",
+                (new_hashed_password, username),
+            )
+            conn.commit()
+    except Exception as error:
+        conn.rollback()
+        raise
+    finally:
+        release_connection(conn)
 
 
-def delete_user(username: str):
+def delete_user(username: str) -> bool:
     conn = get_connection()
     try:
         with conn.cursor() as cursor:

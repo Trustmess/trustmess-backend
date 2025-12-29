@@ -1,7 +1,11 @@
 from fastapi import APIRouter, HTTPException, Response, Depends, Cookie
 from src.db import queries
 from src.schemas.auth import AuthRequest
-from src.schemas.user import DeleteUserRequest
+from src.schemas.user import (
+    DeleteUserRequest,
+    UpdatePasswordRequest,
+    UpdateUsernameRequest,
+)
 from src.secure.passhashing import (
     hash_password_def,
     verify_hached_password_def as hashed_password,
@@ -117,24 +121,54 @@ async def register(auth_request: AuthRequest):
 # *****************************************************************************
 @router.post("/auth/delete_user", tags=["authentication", "users_crud"])
 async def delete_user(request: DeleteUserRequest):
-    deleted = queries.delete_user(request.username)
-    if not deleted:
-        raise HTTPException(status_code=404, detail="User not found")
-    return {"status": "succes", "messaga": "User deleted successfully"}
+    try:
+        existing_user = queries.get_user_by_username(request.username)
+        if not existing_user:
+            raise HTTPException(status_code=404, detail="User not found")
+        else:
+            deleted = queries.delete_user(request.username)
+            if not deleted:
+                raise HTTPException(status_code=404, detail="User not found")
+            return {"status": "success", "message": "User deleted successfully"}
+
+    except Exception as error:
+        raise HTTPException(
+            status_code=500, detail=f"Failed to delete user: {str(error)}"
+        )
 
 
 # *****************************************************************************
 # * POST /auth/update_username
 # *****************************************************************************
 @router.post("/auth/update_username", tags=["authentication", "users_crud"])
-async def update_username(request: DeleteUserRequest): ...
+async def update_username(request: UpdateUsernameRequest):
+    try:
+        existing_user = queries.get_user_by_username(request.new_username)
+        if existing_user:
+            raise HTTPException(status_code=400, detail="Username already taken")
+
+        else:
+            queries.update_username(request.current_username, request.new_username)
+            return {"status": "success", "message": "Username updated successfully"}
+    except Exception as error:
+        raise HTTPException(
+            status_code=500, detail=f"Failed to update username: {str(error)}"
+        )
 
 
 # *****************************************************************************
 # * POST /auth/update_password
 # *****************************************************************************
 @router.post("/auth/update_password", tags=["authentication", "users_crud"])
-async def update_password(request: DeleteUserRequest): ...
+async def update_password(request: DeleteUserRequest):
+    try:
+        hashed_new_password = hash_password_def(request.new_password)
+        queries.update_password(request.username, hashed_new_password)
+        return {"status": "success", "message": "Password updated successfully"}
+    except Exception as error:
+        raise HTTPException(
+            status_code=500, detail=f"Failed to update password: {str(error)}"
+        )
 
 
 # *****************************************************************************
