@@ -9,7 +9,7 @@ from src.routes.dev_routes import router as dev_router
 app = FastAPI(
     title="TrustMess API",
     description="Real-time messaging API with WebSocket support",
-    version="1.2.0",
+    version="1.2.5",
 )
 
 # ? CORS Middleware
@@ -37,7 +37,7 @@ app.add_middleware(
 # *****************************************************************************
 @app.get("/")
 async def read_root():
-    return {"status": "Ok", "docs": "/docs", "version": "1.2.0"}
+    return {"status": "Ok", "docs": "/docs", "version": "1.2.5"}
 
 
 # *****************************************************************************
