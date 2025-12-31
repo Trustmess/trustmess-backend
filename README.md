@@ -137,7 +137,7 @@ You are free to use, modify, and distribute this software for any purpose, inclu
 
 ## Author
 
-**Stanislav Kucherenko** - Full Stack Developer
+**Stanislav Kucherenko** - Full Stack Developer.
 
 ## Support
 
