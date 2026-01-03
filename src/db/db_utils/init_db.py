@@ -9,7 +9,7 @@ DATABASE_URL = os.getenv('DATABASE_URL')
 
 def main():
     if not DATABASE_URL:
-        raise SystemExit('ATABASE_URL not set in env')
+        raise SystemExit('DATABASE_URL not set in env')
     conn = psycopg2.connect(DATABASE_URL)
     try:
         with conn.cursor() as cursor:
